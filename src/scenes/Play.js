@@ -1,7 +1,12 @@
+var text;
+var timedEvent;
+var initialTime = 60;
+
 class Play extends Phaser.Scene {
     constructor() {
         super("playScene");
     }
+
     preload() {
         // load images/tile sprites
         this.load.image('rocket', './assets/rocket.png');
@@ -10,12 +15,19 @@ class Play extends Phaser.Scene {
         // load spritesheet
         this.load.spritesheet('explosion', './assets/explosion.png', {frameWidth: 64, frameHeight: 32, startFrame: 0, endFrame: 9});
       }
-
+    
     create() {
+        
+        initialTime = 60;
+
+        //text = this.add.text(300, 100, 'Countdown: ' + formatTime(this.initialTime));
+
+        // Each 1000 ms call onEvent
+        timedEvent = this.time.addEvent({ delay: 1000, callback: onEvent, callbackScope: this, loop: true });
         // place tile sprite
         this.starfield = this.add.tileSprite(0, 0, 640, 480, 'starfield').setOrigin(0, 0);
         // green UI background
-        this.add.rectangle(0, borderUISize + borderPadding, game.config.width, borderUISize * 2, 0x00FF00).setOrigin(0, 0);
+        this.add.rectangle(0, borderUISize + borderPadding, game.config.width, borderUISize * 2, 0x000000).setOrigin(0, 0);
         // white borders
         this.add.rectangle(0, 0, game.config.width, borderUISize, 0xFFFFFF).setOrigin(0, 0);
         this.add.rectangle(0, game.config.height - borderUISize, game.config.width, borderUISize, 0xFFFFFF).setOrigin(0, 0);
@@ -69,6 +81,7 @@ class Play extends Phaser.Scene {
             fixedWidth: 100
         }
         this.scoreLeft = this.add.text(borderUISize + borderPadding, borderUISize + borderPadding*2, this.p1Score, scoreConfig);
+        text = this.add.text(300, 50, 'Countdown: ' + formatTime(initialTime));
         //this.timeLeft = this.add.text(borderUISize + borderPadding, borderUISize + borderPadding*2, this.time.elapsed, timeConfig);
         // GAME OVER flag
         this.gameOver = false;
@@ -143,4 +156,24 @@ class Play extends Phaser.Scene {
         this.scoreLeft.text = this.p1Score;       
         this.sound.play('sfx_explosion');
     }
+
+
+
+}
+function formatTime(seconds){
+    // Minutes
+    var minutes = Math.floor(seconds/60);
+    // Seconds
+    var partInSeconds = seconds%60;
+    // Adds left zeros to seconds
+    partInSeconds = partInSeconds.toString().padStart(2,'0');
+    // Returns formated time
+    return `${minutes}:${partInSeconds}`;
+}
+
+
+function onEvent ()
+{
+    this.initialTime -= 1; // One second
+    text.setText('Countdown: ' + formatTime(this.initialTime));
 }
