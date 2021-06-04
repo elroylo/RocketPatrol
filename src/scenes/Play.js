@@ -1,6 +1,6 @@
+var image;
 var text;
 var timedEvent;
-var initialTime = 60;
 
 class Play extends Phaser.Scene {
     constructor() {
@@ -18,7 +18,6 @@ class Play extends Phaser.Scene {
     
     create() {
         
-        initialTime = 60;
 
         //text = this.add.text(300, 100, 'Countdown: ' + formatTime(this.initialTime));
 
@@ -81,7 +80,12 @@ class Play extends Phaser.Scene {
             fixedWidth: 100
         }
         this.scoreLeft = this.add.text(borderUISize + borderPadding, borderUISize + borderPadding*2, this.p1Score, scoreConfig);
-        text = this.add.text(300, 50, 'Countdown: ' + formatTime(initialTime));
+        text = this.add.text(300, 50);
+
+        // timedEvent = this.time.addEvent({ delay: 2000, callback: onEvent, callbackScope: this });
+
+        //  The same as above, but uses a method signature to declare it (shorter, and compatible with GSAP syntax)
+        timedEvent = this.time.addEvent({ delay: 60000, callback: onEvent, callbackScope: this, repeat: 60000, startAt: 60000 });
         //this.timeLeft = this.add.text(borderUISize + borderPadding, borderUISize + borderPadding*2, this.time.elapsed, timeConfig);
         // GAME OVER flag
         this.gameOver = false;
@@ -97,8 +101,8 @@ class Play extends Phaser.Scene {
 
     }
     update() {
-
-         // check key input for restart
+        // timer
+        text.setText('Progress: ' + 100 * timedEvent.getProgress().toString().substr(0, 4) + '%');         // check key input for restart
         if (this.gameOver && Phaser.Input.Keyboard.JustDown(keyR)) {
             this.scene.restart();
         }
