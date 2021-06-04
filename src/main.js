@@ -1,3 +1,8 @@
+// Name: Elroy Lobo
+// Rocket Patrol Modded
+// Date: 4/21/21
+// Time took: 11 hours
+
 let config = {
     type: Phaser.CANVAS,
     width: 640,
