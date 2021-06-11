@@ -1,7 +1,6 @@
 var image;
 var text;
 var timedEvent;
-
 class Play extends Phaser.Scene {
     constructor() {
         super("playScene");
@@ -25,6 +24,9 @@ class Play extends Phaser.Scene {
     
     create() {
         
+
+        //this.gameBackground = this.add.sprite(640, 480, 'starfield');
+
 
         //text = this.add.text(300, 100, 'Countdown: ' + formatTime(this.initialTime));
         this.starfield1 = this.add.tileSprite(0, 0, 640, 480, 'starfield1').setOrigin(0, 0);
@@ -87,6 +89,18 @@ class Play extends Phaser.Scene {
             },
             fixedWidth: 100
         }
+        let highscoreConfig = {
+            fontFamily: 'Courier',
+            fontSize: '28px',
+            backgroundColor: '#9a6688',
+            color: '#fdeca6',
+            align: 'right',
+            padding: {
+            top: 5,
+            bottom: 5,
+            },
+            fixedWidth: 100
+        }
         let timeConfig = {
             fontFamily: 'Courier',
             fontSize: '28px',
@@ -100,6 +114,7 @@ class Play extends Phaser.Scene {
             fixedWidth: 100
         }
         this.scoreLeft = this.add.text(borderUISize + borderPadding, borderUISize + borderPadding*2, this.p1Score, scoreConfig);
+        this.currentHighscore = this.add.text(borderUISize + borderPadding + 400 , borderUISize + borderPadding*2, highscore, highscoreConfig);;
         text = this.add.text(300, 50);
 
         // timedEvent = this.time.addEvent({ delay: 2000, callback: onEvent, callbackScope: this });
@@ -123,10 +138,18 @@ class Play extends Phaser.Scene {
     }
     update() {
         // timer
-        text.setText('Progress: ' + 100 * timedEvent.getProgress().toString().substr(0, 4) + '%');         // check key input for restart
-        //text.setText('time: ' + game.gameTimer);         // check key input for restart
+        text.setText('Progress: ' + 100 * timedEvent.getProgress().toString().substr(0, 4) + '%\t  Highscore');        
+        //text.setText('time: ' + game.gameTimer);       
         this.starfield4.tilePositionX -= 3;
         // speed incrementor past 30 seconds
+        if(highscore < this.p1Score){
+            highscore = this.p1Score;
+            this.currentHighscore.text = this.p1Score;
+
+
+            // debugger
+            //console.log("test");
+        }
         if(timedEvent.getProgress() > 0.5 && game.settings.increm == 0){
             game.settings.spaceshipSpeed += 2;
             game.settings.increm = 1;
@@ -144,7 +167,7 @@ class Play extends Phaser.Scene {
             this.ship02.update();
             this.ship03.update();
         } 
-        //this.starfield.tilePositionX -= 2;
+        this.starfield.tilePositionX -= 2;
         this.starfield4.tilePositionX -= 3;
         this.starfield3.tilePositionX -= 1;
         this.starfield2.tilePositionX -= 1;
