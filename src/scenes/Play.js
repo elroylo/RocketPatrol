@@ -12,12 +12,15 @@ class Play extends Phaser.Scene {
         this.load.image('rocket', './assets/rocket.png');
         this.load.image('spaceship', './assets/spaceship.png');
         this.load.image('super', './assets/supership.png');
+        this.load.image('starfield', './assets/starfield.png');
         this.load.image('starfield1', './assets/starfield1.png');
         this.load.image('starfield2', './assets/starfield2.png');
         this.load.image('starfield3', './assets/starfield3.png');
         this.load.image('starfield4', './assets/starfield4.png');
         // load spritesheet
         this.load.spritesheet('explosion', './assets/explosion.png', {frameWidth: 64, frameHeight: 32, startFrame: 0, endFrame: 9});
+        // load bgm
+        this.load.audio('sfx_music', './assets/music.wav');
       }
     
     create() {
@@ -28,6 +31,10 @@ class Play extends Phaser.Scene {
         this.starfield2 = this.add.tileSprite(0, 0, 640, 480, 'starfield2').setOrigin(0, 0);
         this.starfield3 = this.add.tileSprite(0, 0, 640, 480, 'starfield3').setOrigin(0, 0);
         this.starfield4 = this.add.tileSprite(0, 0, 640, 480, 'starfield4').setOrigin(0, 0);
+
+        // play bgm 
+        this.musicPlaying = this.sound.add('sfx_music', './assets/music.wav');
+        this.musicPlaying.play();
         // Each 1000 ms call onEvent
         timedEvent = this.time.addEvent({ delay: 1000, callback: onEvent, callbackScope: this, loop: true });
         // place tile sprite
@@ -35,16 +42,16 @@ class Play extends Phaser.Scene {
         // green UI background
         this.add.rectangle(0, borderUISize + borderPadding, game.config.width, borderUISize * 2, 0x000000).setOrigin(0, 0);
         // white borders
-        this.add.rectangle(0, 0, game.config.width, borderUISize, 0xFFFFFF).setOrigin(0, 0);
-        this.add.rectangle(0, game.config.height - borderUISize, game.config.width, borderUISize, 0xFFFFFF).setOrigin(0, 0);
-        this.add.rectangle(0, 0, borderUISize, game.config.height, 0xFFFFFF).setOrigin(0, 0);
-        this.add.rectangle(game.config.width - borderUISize, 0, borderUISize, game.config.height, 0xFFFFFF).setOrigin(0, 0);
+        this.add.rectangle(0, 0, game.config.width, borderUISize, 0xfdeca6).setOrigin(0, 0);
+        this.add.rectangle(0, game.config.height - borderUISize, game.config.width, borderUISize, 0xfdeca6).setOrigin(0, 0);
+        this.add.rectangle(0, 0, borderUISize, game.config.height, 0xfdeca6).setOrigin(0, 0);
+        this.add.rectangle(game.config.width - borderUISize, 0, borderUISize, game.config.height, 0xfdeca6).setOrigin(0, 0);
         // add rocket (p1)
         this.p1Rocket = new Rocket(this, game.config.width/2, game.config.height - borderUISize - borderPadding, 'rocket').setOrigin(0.5, 0);
 
         // add spaceships (x3)
         this.ship01 = new Spaceship(this, game.config.width + borderUISize*6, borderUISize*4, 'spaceship', 0, 30).setOrigin(0, 0);
-        this.ship02 = new Spaceship(this, game.config.width + borderUISize*3, borderUISize*5 + borderPadding*2, 'super', 0, 20).setOrigin(0,0);
+        this.ship02 = new Spaceship(this, game.config.width + borderUISize*3, borderUISize*5 + borderPadding*2, 'super', 2, 50).setOrigin(0,0);
         this.ship03 = new Spaceship(this, game.config.width, borderUISize*6 + borderPadding*4, 'spaceship', 0, 10).setOrigin(0,0);
 
         //this.ship01 = new Spaceship(this, 500, 10, 'spaceship', 0, 30).setOrigin(0,0);
@@ -56,7 +63,8 @@ class Play extends Phaser.Scene {
         keyR = this.input.keyboard.addKey(Phaser.Input.Keyboard.KeyCodes.R);
         keyLEFT = this.input.keyboard.addKey(Phaser.Input.Keyboard.KeyCodes.LEFT);
         keyRIGHT = this.input.keyboard.addKey(Phaser.Input.Keyboard.KeyCodes.RIGHT);
-
+        keyUP = this.input.keyboard.addKey(Phaser.Input.Keyboard.KeyCodes.UP);
+        keyDOWN = this.input.keyboard.addKey(Phaser.Input.Keyboard.KeyCodes.DOWN);
         // animation config
         this.anims.create({
         key: 'explode',
@@ -70,7 +78,7 @@ class Play extends Phaser.Scene {
         let scoreConfig = {
             fontFamily: 'Courier',
             fontSize: '28px',
-            backgroundColor: '#F3B141',
+            backgroundColor: '#fdeca6',
             color: '#843605',
             align: 'right',
             padding: {
@@ -82,7 +90,7 @@ class Play extends Phaser.Scene {
         let timeConfig = {
             fontFamily: 'Courier',
             fontSize: '28px',
-            backgroundColor: '#F3B141',
+            backgroundColor: '#fdeca6',
             color: '#843605',
             align: 'right',
             padding: {
@@ -97,7 +105,7 @@ class Play extends Phaser.Scene {
         // timedEvent = this.time.addEvent({ delay: 2000, callback: onEvent, callbackScope: this });
 
         //  The same as above, but uses a method signature to declare it (shorter, and compatible with GSAP syntax)
-        timedEvent = this.time.addEvent({ delay: 60000, callback: onEvent, callbackScope: this, repeat: 60000, startAt: 60000 });
+        timedEvent = this.time.addEvent({ delay: 60000, callback: onEvent, callbackScope: this, repeat: 600000, startAt: 60000 });
         //this.timeLeft = this.add.text(borderUISize + borderPadding, borderUISize + borderPadding*2, this.time.elapsed, timeConfig);
         // GAME OVER flag
         this.gameOver = false;
@@ -107,6 +115,7 @@ class Play extends Phaser.Scene {
         this.clock = this.time.delayedCall(game.settings.gameTimer, () => {
             this.add.text(game.config.width/2, game.config.height/2, 'GAME OVER', scoreConfig).setOrigin(0.5);
             this.add.text(game.config.width/2, game.config.height/2 + 64, 'Press (R) to Restart or ← for Menu', scoreConfig).setOrigin(0.5);
+            this.musicPlaying.stop();
             this.gameOver = true;
         }, null, this);
                 
@@ -115,6 +124,13 @@ class Play extends Phaser.Scene {
     update() {
         // timer
         text.setText('Progress: ' + 100 * timedEvent.getProgress().toString().substr(0, 4) + '%');         // check key input for restart
+        //text.setText('time: ' + game.gameTimer);         // check key input for restart
+        this.starfield4.tilePositionX -= 3;
+        // speed incrementor past 30 seconds
+        if(timedEvent.getProgress() > 0.5 && game.settings.increm == 0){
+            game.settings.spaceshipSpeed += 2;
+            game.settings.increm = 1;
+        }
         if (this.gameOver && Phaser.Input.Keyboard.JustDown(keyR)) {
             this.scene.restart();
         }
@@ -122,17 +138,17 @@ class Play extends Phaser.Scene {
         if (this.gameOver && Phaser.Input.Keyboard.JustDown(keyLEFT)) {
             this.scene.start("menuScene");
         }
-        this.starfield.tilePositionX -= 4;
         if (!this.gameOver) {               
             this.p1Rocket.update();         // update rocket sprite
             this.ship01.update();           // update spaceships (x3)
             this.ship02.update();
             this.ship03.update();
         } 
-        this.starfield4.tilePositionX -= 1;
-        this.starfield3.tilePositionX -= 2;
-        this.starfield2.tilePositionX -= 3;
-        this.starfield1.tilePositionX -= 4;
+        //this.starfield.tilePositionX -= 2;
+        this.starfield4.tilePositionX -= 3;
+        this.starfield3.tilePositionX -= 1;
+        this.starfield2.tilePositionX -= 1;
+        this.starfield1.tilePositionX -= 1;
         // check collisions
         if(this.checkCollision(this.p1Rocket, this.ship03)) {
             this.p1Rocket.reset();
