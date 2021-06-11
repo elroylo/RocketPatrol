@@ -140,7 +140,7 @@ class Play extends Phaser.Scene {
         // timer
         text.setText('Progress: ' + 100 * timedEvent.getProgress().toString().substr(0, 4) + '%\t  Highscore');        
         //text.setText('time: ' + game.gameTimer);       
-        this.starfield4.tilePositionX -= 3;
+        //this.starfield4.tilePositionX -= 3;
         // speed incrementor past 30 seconds
         if(highscore < this.p1Score){
             highscore = this.p1Score;
