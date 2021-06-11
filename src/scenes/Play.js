@@ -24,10 +24,10 @@ class Play extends Phaser.Scene {
         
 
         //text = this.add.text(300, 100, 'Countdown: ' + formatTime(this.initialTime));
-        this.starfield4 = this.add.tileSprite(0, 0, 640, 480, 'starfield4').setOrigin(0, 0);
-        this.starfield3 = this.add.tileSprite(0, 0, 640, 480, 'starfield3').setOrigin(0, 0);
-        this.starfield2 = this.add.tileSprite(0, 0, 640, 480, 'starfield2').setOrigin(0, 0);
         this.starfield1 = this.add.tileSprite(0, 0, 640, 480, 'starfield1').setOrigin(0, 0);
+        this.starfield2 = this.add.tileSprite(0, 0, 640, 480, 'starfield2').setOrigin(0, 0);
+        this.starfield3 = this.add.tileSprite(0, 0, 640, 480, 'starfield3').setOrigin(0, 0);
+        this.starfield4 = this.add.tileSprite(0, 0, 640, 480, 'starfield4').setOrigin(0, 0);
         // Each 1000 ms call onEvent
         timedEvent = this.time.addEvent({ delay: 1000, callback: onEvent, callbackScope: this, loop: true });
         // place tile sprite
