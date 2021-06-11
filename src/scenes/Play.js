@@ -11,7 +11,11 @@ class Play extends Phaser.Scene {
         // load images/tile sprites
         this.load.image('rocket', './assets/rocket.png');
         this.load.image('spaceship', './assets/spaceship.png');
-        this.load.image('starfield', './assets/starfield.png');
+        this.load.image('super', './assets/supership.png');
+        this.load.image('starfield1', './assets/starfield1.png');
+        this.load.image('starfield2', './assets/starfield2.png');
+        this.load.image('starfield3', './assets/starfield3.png');
+        this.load.image('starfield4', './assets/starfield4.png');
         // load spritesheet
         this.load.spritesheet('explosion', './assets/explosion.png', {frameWidth: 64, frameHeight: 32, startFrame: 0, endFrame: 9});
       }
@@ -20,7 +24,10 @@ class Play extends Phaser.Scene {
         
 
         //text = this.add.text(300, 100, 'Countdown: ' + formatTime(this.initialTime));
-
+        this.starfield4 = this.add.tileSprite(0, 0, 640, 480, 'starfield4').setOrigin(0, 0);
+        this.starfield3 = this.add.tileSprite(0, 0, 640, 480, 'starfield3').setOrigin(0, 0);
+        this.starfield2 = this.add.tileSprite(0, 0, 640, 480, 'starfield2').setOrigin(0, 0);
+        this.starfield1 = this.add.tileSprite(0, 0, 640, 480, 'starfield1').setOrigin(0, 0);
         // Each 1000 ms call onEvent
         timedEvent = this.time.addEvent({ delay: 1000, callback: onEvent, callbackScope: this, loop: true });
         // place tile sprite
@@ -37,8 +44,13 @@ class Play extends Phaser.Scene {
 
         // add spaceships (x3)
         this.ship01 = new Spaceship(this, game.config.width + borderUISize*6, borderUISize*4, 'spaceship', 0, 30).setOrigin(0, 0);
-        this.ship02 = new Spaceship(this, game.config.width + borderUISize*3, borderUISize*5 + borderPadding*2, 'spaceship', 0, 20).setOrigin(0,0);
+        this.ship02 = new Spaceship(this, game.config.width + borderUISize*3, borderUISize*5 + borderPadding*2, 'super', 0, 20).setOrigin(0,0);
         this.ship03 = new Spaceship(this, game.config.width, borderUISize*6 + borderPadding*4, 'spaceship', 0, 10).setOrigin(0,0);
+
+        //this.ship01 = new Spaceship(this, 500, 10, 'spaceship', 0, 30).setOrigin(0,0);
+        //this.ship02 = new Spaceship(this, 300, 10, 'super', 0, 35).setOrigin(0,0);
+        //this.ship03 = new Spaceship(this, 150, 10, 'spaceship', 0, 20).setOrigin(0,0);
+        //this.ship04 = new Spaceship(this, 10, 10, 'spaceship', 0, 10).setOrigin(0,0);
           // define keys
         keyF = this.input.keyboard.addKey(Phaser.Input.Keyboard.KeyCodes.F);
         keyR = this.input.keyboard.addKey(Phaser.Input.Keyboard.KeyCodes.R);
@@ -117,7 +129,10 @@ class Play extends Phaser.Scene {
             this.ship02.update();
             this.ship03.update();
         } 
-
+        this.starfield4.tilePositionX -= 1;
+        this.starfield3.tilePositionX -= 2;
+        this.starfield2.tilePositionX -= 3;
+        this.starfield1.tilePositionX -= 4;
         // check collisions
         if(this.checkCollision(this.p1Rocket, this.ship03)) {
             this.p1Rocket.reset();
